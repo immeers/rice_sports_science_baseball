@@ -1,7 +1,7 @@
 baseballdata <- read.csv("2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report (1).txt", sep="\t") # Default is sep=""
 View(baseballdata)
-n <- 0
 
+n <- 0
 MetricData <- data.frame(matrix(ncol = ncol(baseballdata), nrow = 5))
 for (i in 1:ncol(baseballdata)) {
   if (baseballdata[2,i] == "METRIC") {
@@ -33,3 +33,13 @@ for (i in 1:ncol(baseballdata)) {
 TSData <- Filter(function(x)!all(is.na(x)), TSData) # Removes empty columns
 View(TSData)
 
+n <- 1
+DerivedData <- data.frame(matrix(ncol = ncol(baseballdata), nrow = nrow(baseballdata)))
+for (i in 1:ncol(baseballdata)) {
+  if (baseballdata[2,i] == "DERIVED") {
+    n <- n+1
+    DerivedData[,1] <- baseballdata[,1]
+    DerivedData[,n] <- baseballdata[,i]
+  }
+}
+View(DerivedData)
