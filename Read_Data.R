@@ -19,4 +19,5 @@ for (i in 1:ncol(baseballdata)) {
     EventData[,n] <- baseballdata[1:5,i]
   }
 }
+EventData <- Filter(function(x)!all(is.na(x)), EventData) # Removes empty columns
 View(EventData)
