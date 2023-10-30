@@ -9,6 +9,7 @@ for (i in 1:ncol(baseballdata)) {
     MetricData[,n] <- baseballdata[1:5,i]
   }
 }
+MetricData <- Filter(function(x)!all(is.na(x)), MetricData) # Removes empty columns
 View(MetricData)
 
 n <- 0
@@ -42,4 +43,5 @@ for (i in 1:ncol(baseballdata)) {
     DerivedData[,n] <- baseballdata[,i]
   }
 }
+DerivedData <- Filter(function(x)!all(is.na(x)), DerivedData) # Removes empty columns
 View(DerivedData)
