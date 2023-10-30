@@ -21,3 +21,15 @@ for (i in 1:ncol(baseballdata)) {
 }
 EventData <- Filter(function(x)!all(is.na(x)), EventData) # Removes empty columns
 View(EventData)
+
+n <- 0
+TSData <- data.frame(matrix(ncol = ncol(baseballdata), nrow = 5))
+for (i in 1:ncol(baseballdata)) {
+  if (baseballdata[3,i] == "TEMPORAL_SPATIAL") {
+    n <- n+1
+    TSData[,n] <- baseballdata[1:5,i]
+  }
+}
+TSData <- Filter(function(x)!all(is.na(x)), TSData) # Removes empty columns
+View(TSData)
+
