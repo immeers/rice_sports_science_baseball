@@ -45,3 +45,12 @@ for (i in 1:ncol(baseballdata)) {
 }
 DerivedData <- Filter(function(x)!all(is.na(x)), DerivedData) # Removes empty columns
 View(DerivedData)
+
+KinematicData <- data.frame(matrix(ncol = ncol(DerivedData), nrow = nrow(DerivedData)))
+index <- which(baseballdata=="02_START_DATA", arr.ind=TRUE)
+StartFrame <- as.numeric(baseballdata[5,index[1,2]])
+IndexStartFrame <- which(DerivedData[,1]==StartFrame, arr.ind=TRUE)
+KinematicData <- DerivedData[IndexStartFrame:nrow(DerivedData),]
+toprows <- DerivedData[1:4,]
+KinematicData <- rbind(toprows,KinematicData)
+View(KinematicData)
