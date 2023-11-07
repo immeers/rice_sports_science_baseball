@@ -11,7 +11,7 @@ keyframedata$KeyFrameIndices <- gsub('\\}', '', keyframedata$KeyFrameIndices)
 KeyFrameIndices <- c(strsplit(keyframedata$KeyFrameIndices, ";"))
 
 keyframedata$KeyFrameDetectionScores <- gsub('\\{', '', keyframedata$KeyFrameDetectionScores)
-keyframedata$KeyFrameIndices <- gsub('\\}', '', keyframedata$KeyFrameDetectionScores)
+keyframedata$KeyFrameDetectionScores <- gsub('\\}', '', keyframedata$KeyFrameDetectionScores)
 KeyFrameDetectionScores <- c(strsplit(keyframedata$KeyFrameDetectionScores, ";"))
 
 Tracked <- c(keyframedata$Tracked)
