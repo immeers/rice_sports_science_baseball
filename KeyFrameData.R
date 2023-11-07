@@ -2,16 +2,13 @@ keyframedata <- read.csv("motion_tracker_result_parameters.csv", sep=",") # Defa
 View(keyframedata)
 KeyFrameEvent <- c("Start", "MaximumLeadingLegLift", "HandsApart", "ArmsOut", "LeadingFootStrike", "MaximumExternalShoulderRotation", "Acceleration", "BallRelease", "MaximumInternalShoulderRotation", "Deceleration", "MaximumTrailingLegLift", "End")
 
-keyframedata$AreKeyFramesDetected <- gsub('\\{', '', keyframedata$AreKeyFramesDetected)
-keyframedata$AreKeyFramesDetected <- gsub('\\}', '', keyframedata$AreKeyFramesDetected)
+keyframedata$AreKeyFramesDetected <- gsub('[\\{\\}]', '', keyframedata$AreKeyFramesDetected)
 AreKeyFramesDetected <- c(strsplit(keyframedata$AreKeyFramesDetected, ";"))
 
-keyframedata$KeyFrameIndices <- gsub('\\{', '', keyframedata$KeyFrameIndices)
-keyframedata$KeyFrameIndices <- gsub('\\}', '', keyframedata$KeyFrameIndices)
+keyframedata$KeyFrameIndices <- gsub('[\\{\\}]', '', keyframedata$KeyFrameIndices)
 KeyFrameIndices <- c(strsplit(keyframedata$KeyFrameIndices, ";"))
 
-keyframedata$KeyFrameDetectionScores <- gsub('\\{', '', keyframedata$KeyFrameDetectionScores)
-keyframedata$KeyFrameDetectionScores <- gsub('\\}', '', keyframedata$KeyFrameDetectionScores)
+keyframedata$KeyFrameDetectionScores <- gsub('[\\{\\}]', '', keyframedata$KeyFrameDetectionScores)
 KeyFrameDetectionScores <- c(strsplit(keyframedata$KeyFrameDetectionScores, ";"))
 
 Tracked <- c(keyframedata$Tracked)
