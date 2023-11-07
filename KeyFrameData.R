@@ -14,6 +14,8 @@ keyframedata$KeyFrameDetectionScores <- gsub('\\{', '', keyframedata$KeyFrameDet
 keyframedata$KeyFrameIndices <- gsub('\\}', '', keyframedata$KeyFrameDetectionScores)
 KeyFrameDetectionScores <- c(strsplit(keyframedata$KeyFrameDetectionScores, ";"))
 
-KeyFrameDF <- data.frame(KeyFrameEvent, AreKeyFramesDetected, KeyFrameIndices, KeyFrameDetectionScores)
-colnames(KeyFrameDF) = c("KeyFrameEvent", "AreKeyFramesDetected", "KeyFrameIndices", "KeyFrameDetectionScores")
+Tracked <- c(keyframedata$Tracked)
+
+KeyFrameDF <- data.frame(KeyFrameEvent, AreKeyFramesDetected, KeyFrameIndices, KeyFrameDetectionScores, Tracked)
+colnames(KeyFrameDF) = c("KeyFrameEvent", "AreKeyFramesDetected", "KeyFrameIndices", "KeyFrameDetectionScores", "Tracked")
 View(KeyFrameDF)
