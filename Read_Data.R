@@ -2,6 +2,7 @@ install.packages("dplyr")
 install.packages("tidyr")
 library("dplyr")
 library("tidyr")
+library(ggplot2)
 
 
 #' read_data
@@ -15,7 +16,8 @@ read_data <- function(filename){
   View(baseballdata)
   return(baseballdata)
 }
-baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report.txt')
+#baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report.txt')
+baseballdata = read_data("2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report (1).txt")
 
 #' get_metric_data
 #'
@@ -118,14 +120,63 @@ derived_df = get_derived_data(baseballdata)
 
 get_kinematic_data <-function(baseballdata){
     
-  KinematicData <- data.frame(matrix(ncol = ncol(DerivedData), nrow = nrow(DerivedData)))
+  KinematicData <- data.frame(matrix(ncol = ncol(derived_df), nrow = nrow(derived_df)))
   index <- which(baseballdata=="02_START_DATA", arr.ind=TRUE)
   StartFrame <- as.numeric(baseballdata[5,index[1,2]])
-  IndexStartFrame <- which(DerivedData[,1]==StartFrame, arr.ind=TRUE)
-  KinematicData <- DerivedData[IndexStartFrame:nrow(DerivedData),]
-  toprows <- DerivedData[1:4,]
+  IndexStartFrame <- which(derived_df[,1]==StartFrame, arr.ind=TRUE)
+  KinematicData <- derived_df[IndexStartFrame:nrow(derived_df),]
+  toprows <- derived_df[1:4,]
   KinematicData <- rbind(toprows,KinematicData)
   View(KinematicData)
   return(KinematicData)
 }
 kinematic_df = get_kinematic_data(baseballdata)
+
+get_hand_kinematic_sequence <- function(baseballdata){
+  
+  index <- which(kinematic_df=="Pitching_Hand_KinematicSequence", arr.ind=TRUE)
+  item <- kinematic_df[,1]
+  handcolumn <- kinematic_df[,index[1,2]]
+  hand_kinematic_data <- data.frame(item, as.numeric(handcolumn))
+  colnames(hand_kinematic_data) <- c("Frame Number", "Hand Angular Velocity")
+  hand_kinematic_data <- tail(hand_kinematic_data, -4)
+  View(hand_kinematic_data)
+  return(hand_kinematic_data)
+  
+}
+hand_kinematic_sequence_df = get_hand_kinematic_sequence(baseballdata)
+
+get_max_hand_vel_frame <- function(baseballdata){
+  max_hand_vel <- max(hand_kinematic_sequence_df$`Hand Angular Velocity`, na.rm = TRUE)
+  i <- which(hand_kinematic_sequence_df==max_hand_vel, arr.ind=TRUE)
+  max_hand_vel_frame <- hand_kinematic_sequence_df[i[1],1]
+  return(max_hand_vel_frame)
+}
+
+max_hand_velocity_frame = get_max_hand_vel_frame(baseballdata)
+
+get_keyframe_data <- function(filename){
+  keyframedata <- read.csv(filename, sep=",") # Default is sep=""
+  KeyFrameEvent <- c("Start", "MaximumLeadingLegLift", "HandsApart", "ArmsOut", "LeadingFootStrike", "MaximumExternalShoulderRotation", "Acceleration", "BallRelease", "MaximumInternalShoulderRotation", "Deceleration", "MaximumTrailingLegLift", "End")
+  
+  keyframedata$AreKeyFramesDetected <- gsub('[\\{\\}]', '', keyframedata$AreKeyFramesDetected)
+  AreKeyFramesDetected <- c(strsplit(keyframedata$AreKeyFramesDetected, ";"))
+  
+  keyframedata$KeyFrameIndices <- gsub('[\\{\\}]', '', keyframedata$KeyFrameIndices)
+  KeyFrameIndices <- c(strsplit(keyframedata$KeyFrameIndices, ";"))
+  
+  keyframedata$KeyFrameDetectionScores <- gsub('[\\{\\}]', '', keyframedata$KeyFrameDetectionScores)
+  KeyFrameDetectionScores <- c(strsplit(keyframedata$KeyFrameDetectionScores, ";"))
+  
+  Tracked <- c(keyframedata$Tracked)
+  
+  KeyFrameDF <- data.frame(KeyFrameEvent, AreKeyFramesDetected, KeyFrameIndices, KeyFrameDetectionScores, Tracked)
+  colnames(KeyFrameDF) = c("KeyFrameEvent", "AreKeyFramesDetected", "KeyFrameIndices", "KeyFrameDetectionScores", "Tracked")
+  View(KeyFrameDF)
+  return(KeyFrameDF)
+}
+keyframe_df = get_keyframe_data("motion_tracker_result_parameters.csv")
+
+if keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame{
+  print("Ball Release Not Concurrent With Max Hand Angular Velocity")
+}
