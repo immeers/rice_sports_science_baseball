@@ -177,6 +177,6 @@ get_keyframe_data <- function(filename){
 }
 keyframe_df = get_keyframe_data("motion_tracker_result_parameters.csv")
 
-if keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame{
+if (keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame){
   print("Ball Release Not Concurrent With Max Hand Angular Velocity")
 }
