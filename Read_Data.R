@@ -180,3 +180,8 @@ keyframe_df = get_keyframe_data("motion_tracker_result_parameters.csv")
 if (keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame){
   print("Ball Release Not Concurrent With Max Hand Angular Velocity")
 }
+
+ggplot(data = hand_kinematic_sequence_df, aes(x = `Frame Number`, y = `Hand Angular Velocity`)) + geom_point() + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
+
+PitchInfo <- read.csv(("Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
+View(PitchInfo)
