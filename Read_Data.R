@@ -146,6 +146,28 @@ get_hand_kinematic_sequence <- function(baseballdata){
 }
 hand_kinematic_sequence_df = get_hand_kinematic_sequence(baseballdata)
 
+get_all_kinematic_sequences <- function(baseballdata) {
+  s = 0
+  columnnames = data.frame(matrix(ncol = ncol(kinematic_df), nrow = nrow(kinematic_df)))
+  kinematic_sequences_data = data.frame(matrix(ncol = ncol(kinematic_df), nrow = nrow(kinematic_df)))
+  item <- kinematic_df[5:nrow(kinematic_df),1]
+  for (p in 1:ncol(kinematic_df)) {
+    if (sapply("Kinematic", grepl, kinematic_df[1,p]) == "TRUE"){
+      s = s + 1
+      columnnames[1,s] = kinematic_df[1,p]
+      kinematic_sequences_data[1:(nrow(kinematic_df)-4),s] = as.numeric(kinematic_df[5:nrow(kinematic_df),p])
+    }
+    
+  }
+  kinematic_sequences_data <- Filter(function(x)!all(is.na(x)), kinematic_sequences_data)
+  kinematic_sequences_data <- kinematic_sequences_data[1:(nrow(kinematic_sequences_data)-4),]
+  kinematic_sequences_data_frame <- data.frame(item, kinematic_sequences_data)
+  colnames(kinematic_sequences_data_frame) <- c("FrameNumber", columnnames[1,1], columnnames[1,2], columnnames[1,3], columnnames[1,4])
+  View(kinematic_sequences_data_frame)
+  return(kinematic_sequences_data_frame)
+}
+all_kinematic_sequences_df = get_all_kinematic_sequences(baseballdata)
+
 get_max_hand_vel_frame <- function(baseballdata){
   max_hand_vel <- max(hand_kinematic_sequence_df$`Hand Angular Velocity`, na.rm = TRUE)
   i <- which(hand_kinematic_sequence_df==max_hand_vel, arr.ind=TRUE)
@@ -182,6 +204,9 @@ if (keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame){
 }
 
 ggplot(data = hand_kinematic_sequence_df, aes(x = `Frame Number`, y = `Hand Angular Velocity`)) + geom_point() + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
+
+longkinematicdf = all_kinematic_sequences_df %>% pivot_longer(cols=c('Pelvis_KinematicSequence', 'Trunk_KinematicSequence', 'Pitching_UpperArm_KinematicSequence', 'Pitching_Hand_KinematicSequence'), names_to='KinematicSequence',values_to='AngularVelocity')
+ggplot(data = longkinematicdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence)) + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
 
 PitchInfo <- read.csv(("Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
 View(PitchInfo)
