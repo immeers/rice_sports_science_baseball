@@ -18,7 +18,7 @@ read_data <- function(filename){
   View(baseballdata)
   return(baseballdata)
 }
-baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report.txt')
+baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/rice_sports_science_baseball/to be analyzed/to be analyzed/2024_01_09_09_56_21_Rice_Pitching_Lab_0_Matt_Canterino_Home.report.txt')
 #baseballdata = read_data("2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report (1).txt")
 
 #' get_metric_data
@@ -45,7 +45,7 @@ get_metric_data <-function(baseballdata){
 metric_df = get_metric_data(baseballdata)
 
 #melted_df <- metric_df %>%
- # pivot_longer(everything(), names_to = "variable", values_to = "value")
+# pivot_longer(everything(), names_to = "variable", values_to = "value")
 
 #View(melted_df)
 
@@ -90,7 +90,7 @@ get_event_data <-function(baseballdata){
 event_df = get_event_data(baseballdata)
 
 get_ts_data <-function(baseballdata){
-n <- 0
+  n <- 0
   TSData <- data.frame(matrix(ncol = ncol(baseballdata), nrow = 5))
   for (i in 1:ncol(baseballdata)) {
     if (baseballdata[3,i] == "TEMPORAL_SPATIAL") {
@@ -121,7 +121,7 @@ get_derived_data <-function(baseballdata){
 derived_df = get_derived_data(baseballdata)
 
 get_kinematic_data <-function(baseballdata){
-    
+  
   KinematicData <- data.frame(matrix(ncol = ncol(derived_df), nrow = nrow(derived_df)))
   index <- which(baseballdata=="02_START_DATA", arr.ind=TRUE)
   StartFrame <- as.numeric(baseballdata[5,index[1,2]])
