@@ -18,8 +18,8 @@ read_data <- function(filename){
   #View(baseballdata)
   return(baseballdata)
 }
-baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/rice_sports_science_baseball/to be analyzed/to be analyzed/2024_01_09_09_56_21_Rice_Pitching_Lab_0_Matt_Canterino_Home.report.txt')
-#baseballdata = read_data("2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report (1).txt")
+#baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/rice_sports_science_baseball/to be analyzed/to be analyzed/2024_01_09_09_56_21_Rice_Pitching_Lab_0_Matt_Canterino_Home.report.txt')
+baseballdata = read_data("2023_10_05_17_26_21_Rice_Pitching_Lab_44_Jackson_Mayo_Home.report (1).txt")
 
 #' get_metric_data
 #'
@@ -129,7 +129,7 @@ get_kinematic_data <-function(baseballdata){
   KinematicData <- derived_df[IndexStartFrame:nrow(derived_df),]
   toprows <- derived_df[1:4,]
   KinematicData <- rbind(toprows,KinematicData)
- # View(KinematicData)
+  View(KinematicData)
   return(KinematicData)
 }
 kinematic_df = get_kinematic_data(baseballdata)
@@ -142,11 +142,53 @@ get_hand_kinematic_sequence <- function(baseballdata){
   hand_kinematic_data <- data.frame(item, as.numeric(handcolumn))
   colnames(hand_kinematic_data) <- c("Frame Number", "Hand Angular Velocity")
   hand_kinematic_data <- tail(hand_kinematic_data, -4)
-  #View(hand_kinematic_data)
+  View(hand_kinematic_data)
   return(hand_kinematic_data)
   
 }
 hand_kinematic_sequence_df = get_hand_kinematic_sequence(baseballdata)
+
+get_pelvis_kinematic_sequence <- function(baseballdata){
+  
+  index <- which(kinematic_df=="Pelvis_KinematicSequence", arr.ind=TRUE)
+  item <- kinematic_df[,1]
+  pelviscolumn <- kinematic_df[,index[1,2]]
+  pelvis_kinematic_data <- data.frame(item, as.numeric(pelviscolumn))
+  colnames(pelvis_kinematic_data) <- c("Frame Number", "Pelvis Angular Velocity")
+  pelvis_kinematic_data <- tail(pelvis_kinematic_data, -4)
+  View(pelvis_kinematic_data)
+  return(pelvis_kinematic_data)
+  
+}
+pelvis_kinematic_sequence_df = get_pelvis_kinematic_sequence(baseballdata)
+
+get_trunk_kinematic_sequence <- function(baseballdata){
+  
+  index <- which(kinematic_df=="Trunk_KinematicSequence", arr.ind=TRUE)
+  item <- kinematic_df[,1]
+  trunkcolumn <- kinematic_df[,index[1,2]]
+  trunk_kinematic_data <- data.frame(item, as.numeric(trunkcolumn))
+  colnames(trunk_kinematic_data) <- c("Frame Number", "Trunk Angular Velocity")
+  trunk_kinematic_data <- tail(trunk_kinematic_data, -4)
+  View(trunk_kinematic_data)
+  return(trunk_kinematic_data)
+  
+}
+trunk_kinematic_sequence_df = get_trunk_kinematic_sequence
+
+get_upperarm_kinematic_sequence <- function(baseballdata){
+  
+  index <- which(kinematic_df=="Pitching_UpperArm_KinematicSequence", arr.ind=TRUE)
+  item <- kinematic_df[,1]
+  upperarmcolumn <- kinematic_df[,index[1,2]]
+  upperarm_kinematic_data <- data.frame(item, as.numeric(upperarmcolumn))
+  colnames(upperarm_kinematic_data) <- c("Frame Number", "Upper Arm Angular Velocity")
+  upperarm_kinematic_data <- tail(upperarm_kinematic_data, -4)
+  View(upperarm_kinematic_data)
+  return(upperarm_kinematic_data)
+  
+}
+upperarm_kinematic_sequence_df = get_upperarm_kinematic_sequence(baseballdata)
 
 get_all_kinematic_sequences <- function(baseballdata) {
   s = 0
@@ -181,6 +223,7 @@ max_hand_velocity_frame = get_max_hand_vel_frame(baseballdata)
 
 get_keyframe_data <- function(filename){
   keyframedata <- read.csv(filename, sep=",") # Default is sep=""
+  View(keyframedata)
   KeyFrameEvent <- c("Start", "MaximumLeadingLegLift", "HandsApart", "ArmsOut", "LeadingFootStrike", "MaximumExternalShoulderRotation", "Acceleration", "BallRelease", "MaximumInternalShoulderRotation", "Deceleration", "MaximumTrailingLegLift", "End")
   
   keyframedata$AreKeyFramesDetected <- gsub('[\\{\\}]', '', keyframedata$AreKeyFramesDetected)
@@ -198,6 +241,7 @@ get_keyframe_data <- function(filename){
   colnames(KeyFrameDF) = c("KeyFrameEvent", "AreKeyFramesDetected", "KeyFrameIndices", "KeyFrameDetectionScores", "Tracked")
   View(KeyFrameDF)
   return(KeyFrameDF)
+  
 }
 keyframe_df = get_keyframe_data("motion_tracker_result_parameters.csv")
 
@@ -211,6 +255,13 @@ longkinematicdf = all_kinematic_sequences_df %>% pivot_longer(cols=c('Pelvis_Kin
 ggplot(data = longkinematicdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence)) + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
 
 #PitchInfo <- read.csv(("Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
-PitchInfo <- read.csv(("C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
+#PitchInfo <- read.csv(("C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
 
-View(PitchInfo)
+#View(PitchInfo)
+View(all_kinematic_sequences_df)
+View(longkinematicdf)
+
+add_to_master_df <- function(filename){
+  master_hand_df <- data.frame()
+  
+}
