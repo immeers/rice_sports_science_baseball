@@ -15,7 +15,7 @@ library(magrittr)
 #' @examples
 read_data <- function(filename){
   baseballdata <- read.csv(filename, sep="\t") # Default is sep=""
-  View(baseballdata)
+  #View(baseballdata)
   return(baseballdata)
 }
 baseballdata = read_data('C:/Users/immim/OneDrive/Rice/Sports Science/rice_sports_science_baseball/to be analyzed/to be analyzed/2024_01_09_09_56_21_Rice_Pitching_Lab_0_Matt_Canterino_Home.report.txt')
@@ -37,7 +37,7 @@ get_metric_data <-function(baseballdata){
     }
   }
   MetricData <- Filter(function(x)!all(is.na(x)), MetricData) # Removes empty columns
-  View(MetricData)
+  #View(MetricData)
   return(MetricData)
 }
 
@@ -67,7 +67,7 @@ transform_metric_data <- function(metric_df){
   #new col for UOM
   transposed_df$UOM <- NA
   
-  View(transposed_df)
+  #View(transposed_df)
   
   return(transposed_df)
 }
@@ -84,7 +84,7 @@ get_event_data <-function(baseballdata){
     }
   }
   EventData <- Filter(function(x)!all(is.na(x)), EventData) # Removes empty columns
-  View(EventData)
+  #View(EventData)
   return(EventData)
 }
 event_df = get_event_data(baseballdata)
@@ -115,7 +115,7 @@ get_derived_data <-function(baseballdata){
     }
   }
   DerivedData <- Filter(function(x)!all(is.na(x)), DerivedData) # Removes empty columns
-  View(DerivedData)
+  #View(DerivedData)
   return(DerivedData)
 }
 derived_df = get_derived_data(baseballdata)
@@ -129,7 +129,7 @@ get_kinematic_data <-function(baseballdata){
   KinematicData <- derived_df[IndexStartFrame:nrow(derived_df),]
   toprows <- derived_df[1:4,]
   KinematicData <- rbind(toprows,KinematicData)
-  View(KinematicData)
+ # View(KinematicData)
   return(KinematicData)
 }
 kinematic_df = get_kinematic_data(baseballdata)
@@ -142,7 +142,7 @@ get_hand_kinematic_sequence <- function(baseballdata){
   hand_kinematic_data <- data.frame(item, as.numeric(handcolumn))
   colnames(hand_kinematic_data) <- c("Frame Number", "Hand Angular Velocity")
   hand_kinematic_data <- tail(hand_kinematic_data, -4)
-  View(hand_kinematic_data)
+  #View(hand_kinematic_data)
   return(hand_kinematic_data)
   
 }
