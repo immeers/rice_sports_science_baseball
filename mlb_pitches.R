@@ -228,10 +228,11 @@ directory_path <- "C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to
 files <- list.files(path = directory_path)
 
 # Loop over each file
+i = 0
 for (file in files) {
   # Construct the full path to the file
   full_path <- file.path(directory_path, file)
-  
+  i = i + 1
   
   
   # Define the regex pattern
@@ -310,7 +311,18 @@ for (file in files) {
     View(longkinematicdf)
     
     add_to_master_df <- function(filename){
-      master_hand_df <- data.frame()
+      new_df <- data.frame()
+      if (i == 1){
+        master_hand_df <- rbind(new_df, hand_kinematic_sequence_df)
+        master_pelvis_df <- rbind(new_df, pelvis_kinematic_sequence_df)
+        master_trunk_df <- rbind(new_df, trunk_kinematic_sequence_df)
+        master_upperarm_df <- rbind(new_df, upperarm_kinematic_sequence_df)
+      } else {
+        master_hand_df <- cbind(master_hand_df, hand_kinematic_sequence_df)
+        master_pelvis_df <- cbind(master_pelvis_df, pelvis_kinematic_sequence_df)
+        master_trunk_df <- cbind(master_trunk_df, trunk_kinematic_sequence_df)
+        master_upperarm_df <- cbind(master_upperarm_df, upperarm_kinematic_sequence_df)
+      }
   
     }
   }
