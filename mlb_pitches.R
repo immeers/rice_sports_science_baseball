@@ -222,10 +222,12 @@ get_keyframe_data <- function(filename){
 }
 
 # Specify the directory path
-directory_path <- "C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/"
+#directory_path <- "C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/"
+directory_path <- "C:/Users/ahaly/OneDrive/Documents/rice_sports_science_baseball/"
 
 # Get a list of file names in the directory
 files <- list.files(path = directory_path)
+View(files)
 
 # Loop over each file
 i = 0
@@ -279,7 +281,7 @@ for (file in files) {
     pelvis_kinematic_sequence_df = get_pelvis_kinematic_sequence(baseballdata)
     
 
-    trunk_kinematic_sequence_df = get_trunk_kinematic_sequence
+    trunk_kinematic_sequence_df = get_trunk_kinematic_sequence(baseballdata)
     
 
     upperarm_kinematic_sequence_df = get_upperarm_kinematic_sequence(baseballdata)
@@ -292,16 +294,16 @@ for (file in files) {
     max_hand_velocity_frame = get_max_hand_vel_frame(baseballdata)
     
 
-    keyframe_df = get_keyframe_data('C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/2023_12_22_09_48_29_Rice_Pitching_Lab_0_Matt_Canterino_motion_tracker_frame_result_parameters.csv')
-    if (keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame){
-      print("Ball Release Not Concurrent With Max Hand Angular Velocity")
-    }
-    ggplot(data = hand_kinematic_sequence_df, aes(x = `Frame Number`, y = `Hand Angular Velocity`)) + geom_point() + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
+    #keyframe_df = get_keyframe_data('C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/2023_12_22_09_48_29_Rice_Pitching_Lab_0_Matt_Canterino_motion_tracker_frame_result_parameters.csv')
+    #if (keyframe_df$KeyFrameIndices[8] != max_hand_velocity_frame){
+    #  print("Ball Release Not Concurrent With Max Hand Angular Velocity")
+    #}
+    #ggplot(data = hand_kinematic_sequence_df, aes(x = `Frame Number`, y = `Hand Angular Velocity`)) + geom_point() + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
     
     #pivots cols in all kinematic sequences
     longkinematicdf = all_kinematic_sequences_df %>% pivot_longer(cols=c('Pelvis_KinematicSequence', 'Trunk_KinematicSequence', 'Pitching_UpperArm_KinematicSequence', 'Pitching_Hand_KinematicSequence'), names_to='KinematicSequence',values_to='AngularVelocity')
     View(longkinematicdf)
-    ggplot(data = longkinematicdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence)) + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
+    #ggplot(data = longkinematicdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence)) + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
     
     #PitchInfo <- read.csv(("Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
     #PitchInfo <- read.csv(("C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
@@ -310,22 +312,23 @@ for (file in files) {
     View(all_kinematic_sequences_df)
     View(longkinematicdf)
     
-    add_to_master_df <- function(filename){
-      new_df <- data.frame()
-      if (i == 1){
-        master_hand_df <- rbind(new_df, hand_kinematic_sequence_df)
-        master_pelvis_df <- rbind(new_df, pelvis_kinematic_sequence_df)
-        master_trunk_df <- rbind(new_df, trunk_kinematic_sequence_df)
-        master_upperarm_df <- rbind(new_df, upperarm_kinematic_sequence_df)
-      } else {
-        master_hand_df <- cbind(master_hand_df, hand_kinematic_sequence_df)
-        master_pelvis_df <- cbind(master_pelvis_df, pelvis_kinematic_sequence_df)
-        master_trunk_df <- cbind(master_trunk_df, trunk_kinematic_sequence_df)
-        master_upperarm_df <- cbind(master_upperarm_df, upperarm_kinematic_sequence_df)
-      }
-  
+    new_df <- data.frame()
+    if (i == 1){
+      master_hand_df <- rbind(new_df, hand_kinematic_sequence_df)
+      master_pelvis_df <- rbind(new_df, pelvis_kinematic_sequence_df)
+      master_trunk_df <- rbind(new_df, trunk_kinematic_sequence_df)
+      master_upperarm_df <- rbind(new_df, upperarm_kinematic_sequence_df)
+    } else {
+      master_hand_df <- merge(master_hand_df, hand_kinematic_sequence_df, by = "Frame Number", all = TRUE)
+      master_pelvis_df <- merge(master_pelvis_df, pelvis_kinematic_sequence_df, by = "Frame Number", all = TRUE)
+      master_trunk_df <- merge(master_trunk_df, trunk_kinematic_sequence_df, by = "Frame Number", all = TRUE)
+      master_upperarm_df <- merge(master_upperarm_df, upperarm_kinematic_sequence_df, by = "Frame Number", all = TRUE)
     }
-  }
+    
 
+  
   }
   
+}
+View(master_hand_df)
+
