@@ -114,7 +114,7 @@ get_kinematic_data <-function(baseballdata){
   KinematicData <- derived_df[IndexStartFrame:nrow(derived_df),]
   toprows <- derived_df[1:4,]
   KinematicData <- rbind(toprows,KinematicData)
-  View(KinematicData)
+  #View(KinematicData)
   return(KinematicData)
 }
 
@@ -123,49 +123,49 @@ get_hand_kinematic_sequence <- function(baseballdata, date_str){
   index <- which(kinematic_df=="Pitching_Hand_KinematicSequence", arr.ind=TRUE)
   item <- kinematic_df[,1]
   handcolumn <- kinematic_df[,index[1,2]]
-  hand_kinematic_data <- data.frame(item, as.numeric(handcolumn))
+  hand_kinematic_data <- data.frame(as.numeric(item), as.numeric(handcolumn))
   colnames(hand_kinematic_data) <- c("Frame Number", paste("Hand Angular Velocity", date_str))
   hand_kinematic_data <- tail(hand_kinematic_data, -4)
-  View(hand_kinematic_data)
+  #View(hand_kinematic_data)
   return(hand_kinematic_data)
   
 }
 
-get_pelvis_kinematic_sequence <- function(baseballdata){
+get_pelvis_kinematic_sequence <- function(baseballdata, date_str){
   
   index <- which(kinematic_df=="Pelvis_KinematicSequence", arr.ind=TRUE)
   item <- kinematic_df[,1]
   pelviscolumn <- kinematic_df[,index[1,2]]
-  pelvis_kinematic_data <- data.frame(item, as.numeric(pelviscolumn))
-  colnames(pelvis_kinematic_data) <- c("Frame Number", "Pelvis Angular Velocity")
+  pelvis_kinematic_data <- data.frame(as.numeric(item), as.numeric(pelviscolumn))
+  colnames(pelvis_kinematic_data) <- c("Frame Number", paste("Pelvis Angular Velocity", date_str))
   pelvis_kinematic_data <- tail(pelvis_kinematic_data, -4)
-  View(pelvis_kinematic_data)
+  #View(pelvis_kinematic_data)
   return(pelvis_kinematic_data)
   
 }
 
-get_trunk_kinematic_sequence <- function(baseballdata){
+get_trunk_kinematic_sequence <- function(baseballdata, date_str){
   
   index <- which(kinematic_df=="Trunk_KinematicSequence", arr.ind=TRUE)
   item <- kinematic_df[,1]
   trunkcolumn <- kinematic_df[,index[1,2]]
-  trunk_kinematic_data <- data.frame(item, as.numeric(trunkcolumn))
-  colnames(trunk_kinematic_data) <- c("Frame Number", "Trunk Angular Velocity")
+  trunk_kinematic_data <- data.frame(as.numeric(item), as.numeric(trunkcolumn))
+  colnames(trunk_kinematic_data) <- c("Frame Number", paste("Trunk Angular Velocity", date_str))
   trunk_kinematic_data <- tail(trunk_kinematic_data, -4)
-  View(trunk_kinematic_data)
+  #View(trunk_kinematic_data)
   return(trunk_kinematic_data)
   
 }
 
-get_upperarm_kinematic_sequence <- function(baseballdata){
+get_upperarm_kinematic_sequence <- function(baseballdata, date_str){
   
   index <- which(kinematic_df=="Pitching_UpperArm_KinematicSequence", arr.ind=TRUE)
   item <- kinematic_df[,1]
   upperarmcolumn <- kinematic_df[,index[1,2]]
-  upperarm_kinematic_data <- data.frame(item, as.numeric(upperarmcolumn))
-  colnames(upperarm_kinematic_data) <- c("Frame Number", "Upper Arm Angular Velocity")
+  upperarm_kinematic_data <- data.frame(as.numeric(item), as.numeric(upperarmcolumn))
+  colnames(upperarm_kinematic_data) <- c("Frame Number", paste("Upper Arm Angular Velocity", date_str))
   upperarm_kinematic_data <- tail(upperarm_kinematic_data, -4)
-  View(upperarm_kinematic_data)
+  #View(upperarm_kinematic_data)
   return(upperarm_kinematic_data)
   
 }
@@ -227,10 +227,13 @@ directory_path <- "C:/Users/ahaly/OneDrive/Documents/rice_sports_science_basebal
 
 # Get a list of file names in the directory
 files <- list.files(path = directory_path)
-View(files)
+#View(files)
 
 # Loop over each file
 i = 0
+date_df <- data.frame(stringsAsFactors = FALSE)
+date_df[1, ] <- NA
+
 for (file in files) {
   # Construct the full path to the file
   full_path <- file.path(directory_path, file)
@@ -278,13 +281,13 @@ for (file in files) {
     hand_kinematic_sequence_df = get_hand_kinematic_sequence(baseballdata, date)
     
 
-    pelvis_kinematic_sequence_df = get_pelvis_kinematic_sequence(baseballdata)
+    pelvis_kinematic_sequence_df = get_pelvis_kinematic_sequence(baseballdata, date)
     
 
-    trunk_kinematic_sequence_df = get_trunk_kinematic_sequence(baseballdata)
+    trunk_kinematic_sequence_df = get_trunk_kinematic_sequence(baseballdata, date)
     
 
-    upperarm_kinematic_sequence_df = get_upperarm_kinematic_sequence(baseballdata)
+    upperarm_kinematic_sequence_df = get_upperarm_kinematic_sequence(baseballdata, date)
     
 
     all_kinematic_sequences_df = get_all_kinematic_sequences(baseballdata)
@@ -302,17 +305,21 @@ for (file in files) {
     
     #pivots cols in all kinematic sequences
     longkinematicdf = all_kinematic_sequences_df %>% pivot_longer(cols=c('Pelvis_KinematicSequence', 'Trunk_KinematicSequence', 'Pitching_UpperArm_KinematicSequence', 'Pitching_Hand_KinematicSequence'), names_to='KinematicSequence',values_to='AngularVelocity')
-    View(longkinematicdf)
+    #View(longkinematicdf)
     #ggplot(data = longkinematicdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence)) + geom_vline(xintercept=keyframe_df$KeyFrameIndices, linetype="solid", colour = "red")
     
     #PitchInfo <- read.csv(("Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
     #PitchInfo <- read.csv(("C:/Users/immim/OneDrive/Rice/Sports Science/pitching data/Mayo_Fastball_85.6_15.1_-9.3_TM_Metadata.txt"), sep="\t")
     
     #View(PitchInfo)
-    View(all_kinematic_sequences_df)
-    View(longkinematicdf)
+    #View(all_kinematic_sequences_df)
+    
     
     new_df <- data.frame()
+    
+    currentdate_df <- data.frame(date)
+    date_df <- cbind(date_df, currentdate_df)
+    
     if (i == 1){
       master_hand_df <- rbind(new_df, hand_kinematic_sequence_df)
       master_pelvis_df <- rbind(new_df, pelvis_kinematic_sequence_df)
@@ -331,4 +338,10 @@ for (file in files) {
   
 }
 View(master_hand_df)
-
+View(master_pelvis_df)
+View(master_trunk_df)
+View(master_upperarm_df)
+View(date_df)
+longkinematicdf = master_hand_df %>% pivot_longer(cols=c(paste("Hand Angular Velocity", date_df[1,1]), paste("Hand Angular Velocity", date_df[1,2]), paste("Hand Angular Velocity", date_df[1,3]), paste("Hand Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
+View(longkinematicdf)
+ggplot(data = longkinematicdf, aes(x = 'Frame Number', y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
