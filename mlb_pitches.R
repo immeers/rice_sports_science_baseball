@@ -124,7 +124,7 @@ get_hand_kinematic_sequence <- function(baseballdata, date_str){
   item <- kinematic_df[,1]
   handcolumn <- kinematic_df[,index[1,2]]
   hand_kinematic_data <- data.frame(as.numeric(item), as.numeric(handcolumn))
-  colnames(hand_kinematic_data) <- c("Frame Number", paste("Hand Angular Velocity", date_str))
+  colnames(hand_kinematic_data) <- c("FrameNumber", paste("Hand Angular Velocity", date_str))
   hand_kinematic_data <- tail(hand_kinematic_data, -4)
   #View(hand_kinematic_data)
   return(hand_kinematic_data)
@@ -137,7 +137,7 @@ get_pelvis_kinematic_sequence <- function(baseballdata, date_str){
   item <- kinematic_df[,1]
   pelviscolumn <- kinematic_df[,index[1,2]]
   pelvis_kinematic_data <- data.frame(as.numeric(item), as.numeric(pelviscolumn))
-  colnames(pelvis_kinematic_data) <- c("Frame Number", paste("Pelvis Angular Velocity", date_str))
+  colnames(pelvis_kinematic_data) <- c("FrameNumber", paste("Pelvis Angular Velocity", date_str))
   pelvis_kinematic_data <- tail(pelvis_kinematic_data, -4)
   #View(pelvis_kinematic_data)
   return(pelvis_kinematic_data)
@@ -150,7 +150,7 @@ get_trunk_kinematic_sequence <- function(baseballdata, date_str){
   item <- kinematic_df[,1]
   trunkcolumn <- kinematic_df[,index[1,2]]
   trunk_kinematic_data <- data.frame(as.numeric(item), as.numeric(trunkcolumn))
-  colnames(trunk_kinematic_data) <- c("Frame Number", paste("Trunk Angular Velocity", date_str))
+  colnames(trunk_kinematic_data) <- c("FrameNumber", paste("Trunk Angular Velocity", date_str))
   trunk_kinematic_data <- tail(trunk_kinematic_data, -4)
   #View(trunk_kinematic_data)
   return(trunk_kinematic_data)
@@ -163,7 +163,7 @@ get_upperarm_kinematic_sequence <- function(baseballdata, date_str){
   item <- kinematic_df[,1]
   upperarmcolumn <- kinematic_df[,index[1,2]]
   upperarm_kinematic_data <- data.frame(as.numeric(item), as.numeric(upperarmcolumn))
-  colnames(upperarm_kinematic_data) <- c("Frame Number", paste("Upper Arm Angular Velocity", date_str))
+  colnames(upperarm_kinematic_data) <- c("FrameNumber", paste("Upper Arm Angular Velocity", date_str))
   upperarm_kinematic_data <- tail(upperarm_kinematic_data, -4)
   #View(upperarm_kinematic_data)
   return(upperarm_kinematic_data)
@@ -326,10 +326,10 @@ for (file in files) {
       master_trunk_df <- rbind(new_df, trunk_kinematic_sequence_df)
       master_upperarm_df <- rbind(new_df, upperarm_kinematic_sequence_df)
     } else {
-      master_hand_df <- merge(master_hand_df, hand_kinematic_sequence_df, by = "Frame Number", all = TRUE)
-      master_pelvis_df <- merge(master_pelvis_df, pelvis_kinematic_sequence_df, by = "Frame Number", all = TRUE)
-      master_trunk_df <- merge(master_trunk_df, trunk_kinematic_sequence_df, by = "Frame Number", all = TRUE)
-      master_upperarm_df <- merge(master_upperarm_df, upperarm_kinematic_sequence_df, by = "Frame Number", all = TRUE)
+      master_hand_df <- merge(master_hand_df, hand_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
+      master_pelvis_df <- merge(master_pelvis_df, pelvis_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
+      master_trunk_df <- merge(master_trunk_df, trunk_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
+      master_upperarm_df <- merge(master_upperarm_df, upperarm_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
     }
     
 
@@ -337,11 +337,38 @@ for (file in files) {
   }
   
 }
-View(master_hand_df)
-View(master_pelvis_df)
-View(master_trunk_df)
-View(master_upperarm_df)
-View(date_df)
-longkinematicdf = master_hand_df %>% pivot_longer(cols=c(paste("Hand Angular Velocity", date_df[1,1]), paste("Hand Angular Velocity", date_df[1,2]), paste("Hand Angular Velocity", date_df[1,3]), paste("Hand Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
-View(longkinematicdf)
-ggplot(data = longkinematicdf, aes(x = 'Frame Number', y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
+#View(master_hand_df)
+#View(master_pelvis_df)
+#View(master_trunk_df)
+#View(master_upperarm_df)
+
+# Pivots the data frames for each joint
+longhanddf = master_hand_df %>% pivot_longer(cols=c(paste("Hand Angular Velocity", date_df[1,1]), paste("Hand Angular Velocity", date_df[1,2]), paste("Hand Angular Velocity", date_df[1,3]), paste("Hand Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
+longtrunkdf = master_trunk_df %>% pivot_longer(cols=c(paste("Trunk Angular Velocity", date_df[1,1]), paste("Trunk Angular Velocity", date_df[1,2]), paste("Trunk Angular Velocity", date_df[1,3]), paste("Trunk Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
+longpelvisdf = master_pelvis_df %>% pivot_longer(cols=c(paste("Pelvis Angular Velocity", date_df[1,1]), paste("Pelvis Angular Velocity", date_df[1,2]), paste("Pelvis Angular Velocity", date_df[1,3]), paste("Pelvis Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
+longupperarmdf = master_upperarm_df %>% pivot_longer(cols=c(paste("Upper Arm Angular Velocity", date_df[1,1]), paste("Upper Arm Angular Velocity", date_df[1,2]), paste("Upper Arm Angular Velocity", date_df[1,3]), paste("Upper Arm Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
+
+# Plots the points
+ggplot(data = longhanddf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
+ggplot(data = longtrunkdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
+ggplot(data = longpelvisdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
+ggplot(data = longupperarmdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
+
+# Plots the curves
+ggplot(data = longhanddf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
+  geom_line() +
+  labs(x = "Frame Number", y = "Angular Velocity", title = "Hand Angular Velocity Plot by Date")
+ggplot(data = longtrunkdf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
+  geom_line() +
+  labs(x = "Frame Number", y = "Angular Velocity", title = "Trunk Angular Velocity Plot by Date")
+ggplot(data = longpelvisdf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
+  geom_line() +
+  labs(x = "Frame Number", y = "Angular Velocity", title = "Pelvis Angular Velocity Plot by Date")
+ggplot(data = longupperarmdf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
+  geom_line() +
+  labs(x = "Frame Number", y = "Angular Velocity", title = "Upper Arm Angular Velocity Plot by Date")
+
+# Plots the smoothed curves
+ggplot(data = longhanddf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
+  geom_smooth() +
+  labs(x = "Frame Number", y = "Angular Velocity", title = "Smoothed Hand Angular Velocity Plot by Date")
