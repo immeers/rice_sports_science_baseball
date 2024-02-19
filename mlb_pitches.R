@@ -222,12 +222,13 @@ get_keyframe_data <- function(filename){
 }
 
 # Specify the directory path
-#directory_path <- "C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/"
-directory_path <- "C:/Users/ahaly/OneDrive/Documents/rice_sports_science_baseball/"
+directory_path <- "C:/Users/immim/OneDrive/Rice/Sports Science/to be analyzed/to be analyzed/"
+#directory_path <- "C:/Users/ahaly/OneDrive/Documents/rice_sports_science_baseball/"
 
 # Get a list of file names in the directory
 files <- list.files(path = directory_path)
-#View(files)
+#can just type files in console
+View(files)
 
 # Loop over each file
 i = 0
@@ -238,6 +239,7 @@ for (file in files) {
   # Construct the full path to the file
   full_path <- file.path(directory_path, file)
   i = i + 1
+  print(i)
   
   
   # Define the regex pattern
@@ -314,17 +316,37 @@ for (file in files) {
     #View(PitchInfo)
     #View(all_kinematic_sequences_df)
     
+    ##truncate na
+    ##!(is.na(newdf[,2]))- get 
+    ##na.omit(new_df)- tidyverse df with no nas
+    
+    ##reset frame numbers
+    ##get rid of frame numbers
+    
+    ##normalise
+    ##key event = ball release
+    ##down sampling 1700 -> 1000 downsample() groupdata2, scales to smallest col size
+    ##interpolation- spline: approx a curve, linear: join dot to dot
+    ##before add to master, normalise (interpolate to 105 rows), create x = 0 to 105
+    
+    ##geom_vline (xintercept = ballrelease)
+    ##df norm len = 80, pre release
+    ##df norm len = 30, post release
+    ##stack = 105
+    ##Normalise pre and post ball release
+    ##diff between curves- show how consistent, magnitude ^2 sqrt or 
     
     new_df <- data.frame()
     
     currentdate_df <- data.frame(date)
     date_df <- cbind(date_df, currentdate_df)
-    
+    print(i)
     if (i == 1){
       master_hand_df <- rbind(new_df, hand_kinematic_sequence_df)
       master_pelvis_df <- rbind(new_df, pelvis_kinematic_sequence_df)
       master_trunk_df <- rbind(new_df, trunk_kinematic_sequence_df)
       master_upperarm_df <- rbind(new_df, upperarm_kinematic_sequence_df)
+      print("here")
     } else {
       master_hand_df <- merge(master_hand_df, hand_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
       master_pelvis_df <- merge(master_pelvis_df, pelvis_kinematic_sequence_df, by = "FrameNumber", all = TRUE)
@@ -337,17 +359,18 @@ for (file in files) {
   }
   
 }
-#View(master_hand_df)
+View(master_hand_df)
 #View(master_pelvis_df)
 #View(master_trunk_df)
 #View(master_upperarm_df)
 
 # Pivots the data frames for each joint
+
 longhanddf = master_hand_df %>% pivot_longer(cols=c(paste("Hand Angular Velocity", date_df[1,1]), paste("Hand Angular Velocity", date_df[1,2]), paste("Hand Angular Velocity", date_df[1,3]), paste("Hand Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
 longtrunkdf = master_trunk_df %>% pivot_longer(cols=c(paste("Trunk Angular Velocity", date_df[1,1]), paste("Trunk Angular Velocity", date_df[1,2]), paste("Trunk Angular Velocity", date_df[1,3]), paste("Trunk Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
 longpelvisdf = master_pelvis_df %>% pivot_longer(cols=c(paste("Pelvis Angular Velocity", date_df[1,1]), paste("Pelvis Angular Velocity", date_df[1,2]), paste("Pelvis Angular Velocity", date_df[1,3]), paste("Pelvis Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
 longupperarmdf = master_upperarm_df %>% pivot_longer(cols=c(paste("Upper Arm Angular Velocity", date_df[1,1]), paste("Upper Arm Angular Velocity", date_df[1,2]), paste("Upper Arm Angular Velocity", date_df[1,3]), paste("Upper Arm Angular Velocity", date_df[1,4])), names_to='KinematicSequence',values_to='AngularVelocity')
-
+View(longhanddf)
 # Plots the points
 ggplot(data = longhanddf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
 ggplot(data = longtrunkdf, aes(x = FrameNumber, y = AngularVelocity)) + geom_point(aes(color=KinematicSequence))
@@ -372,3 +395,4 @@ ggplot(data = longupperarmdf, aes(x = FrameNumber, y = AngularVelocity, color = 
 ggplot(data = longhanddf, aes(x = FrameNumber, y = AngularVelocity, color = KinematicSequence)) +
   geom_smooth() +
   labs(x = "Frame Number", y = "Angular Velocity", title = "Smoothed Hand Angular Velocity Plot by Date")
+
